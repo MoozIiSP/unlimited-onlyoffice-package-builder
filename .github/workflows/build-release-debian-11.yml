@@ -61,7 +61,20 @@ jobs:
           df -h
       - name: Free Space - Remove docker images
         run: |
-          docker rmi $(docker image ls -aq)
+          # 获取所有镜像的 ID
+          IMAGE_IDS=$(docker image ls -aq)
+          
+          # 判断镜像列表是否为空
+          if [ -n "$IMAGE_IDS" ]; then
+              echo "Found images to remove:"
+              echo "$IMAGE_IDS"
+              # 删除所有镜像
+              docker rmi $IMAGE_IDS
+          else
+              echo "No images to remove."
+          fi
+          
+          # 显示磁盘使用情况
           df -h
       - name: Check out the repo
         uses: actions/checkout@v4
